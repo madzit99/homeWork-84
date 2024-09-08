@@ -2,7 +2,7 @@ import express from "express";
 import User from "../models/User";
 import { Error } from "mongoose";
 import crypto from "crypto";
-import bcrypt from 'bcrypt'
+import bcrypt from "bcrypt";
 
 const usersRouter = express.Router();
 
@@ -16,7 +16,6 @@ usersRouter.post("/", async (req, res, next) => {
 
     await user.save();
     return res.send(user);
-
   } catch (error) {
     if (error instanceof Error.ValidationError) {
       return res.status(400).send(error);

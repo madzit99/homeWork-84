@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import { HydratedDocument } from "mongoose";
-import { UserFields, UserMethods } from "../types";
 import User from "../models/User";
+import { UserFields } from "../type";
 
 export interface RequestWithUser extends Request {
-  user?: HydratedDocument<UserFields & UserMethods>;
+  user?: HydratedDocument<UserFields>;
 }
 
 const auth = async (
@@ -18,7 +18,7 @@ const auth = async (
     return res.status(401).send({ error: 'Header "Authorization" not found' });
   }
 
-  const [_bearer, token] = headerValue.split(" "); 
+  const [_bearer, token] = headerValue.split(" ");
 
   if (!token) {
     return res.status(401).send({ error: "Token not found" });
