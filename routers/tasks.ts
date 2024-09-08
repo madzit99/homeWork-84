@@ -35,4 +35,53 @@ tasksRouter.get("/", auth, async (req: RequestWithUser, res, next) => {
   }
 });
 
+tasksRouter.put("/:id", auth, async (req: RequestWithUser, res, next) => {
+  try {
+    const task = await Task.findById(req.params.id);
+    if (!task) {
+      return res.status(404).send({ error: "Таск не найден!" });
+    }
+
+    if (task.user.toString() !== req.user?._id.toString()) {
+      return res.status(403).send({ error: "У вас нет прав!" });
+    }
+
+    if (req.body.title) {
+      task.title = req.body.title;
+    }
+
+    if (req.body.description) {
+      task.description = req.body.description;
+    }
+
+    if (req.body.status) {
+      task.status = req.body.status;
+    }
+
+    await task.save();
+
+    return res.send(task);
+  } catch (error) {
+    return next(error);
+  }
+});
+
+tasksRouter.delete("/:id", auth, async (req: RequestWithUser, res, next) => {
+  try {
+    const task = await Task.findById(req.params.id);
+
+    if (!task) {
+      return res.status(404).send({ error: "Таск не найден!" });
+    }
+    if (task.user.toString() !== req.user?._id.toString()) {
+      return res.status(403).send({ error: "У вас нет прав!" });
+    }
+
+    await Task.findByIdAndDelete(req.params.id);
+    return res.send("Таск удален.");
+  } catch (error) {
+    return next(error);
+  }
+});
+
 export default tasksRouter;
